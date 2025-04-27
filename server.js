@@ -6,28 +6,28 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
-// 用于存储所有连接的客户端
+// Store all connected clients
 const clients = new Map();
 
 wss.on('connection', (ws) => {
-  console.log('客户端已连接');
+  console.log('Client connected');
   let userId = null;
 
-  // 处理客户端消息
+  // Handle client messages
   ws.on('message', (message) => {
     const data = JSON.parse(message);
-    console.log('收到消息:', data);
+    console.log('Message received:', data);
 
-    // 如果是登录消息，存储用户ID和对应的WebSocket连接
+    // If it's a login message, store the user ID and corresponding WebSocket connection
     if (data.type === 'login') {
       userId = data.userId;
       clients.set(userId, ws);
-      console.log(`用户 ${userId} 已登录`);
+      console.log(`User ${userId} logged in`);
       
-      // 通知所有客户端有用户上线
+      // Notify all clients that a user is online
       broadcastUserStatus(userId, true);
     } 
-    // 如果是聊天消息，转发给目标用户
+    // If it's a chat message, forward it to the target user
     else if (data.type === 'message') {
       const targetWs = clients.get(data.to);
       if (targetWs && targetWs.readyState === WebSocket.OPEN) {
@@ -38,25 +38,25 @@ wss.on('connection', (ws) => {
           timestamp: new Date().toISOString()
         }));
       } else {
-        // 如果目标用户不在线，存储离线消息（这里省略实现）
-        console.log(`目标用户 ${data.to} 不在线，消息未发送`);
+        // If the target user is not online, store offline messages (implementation omitted here)
+        console.log(`Target user ${data.to} is offline, message not sent`);
       }
     }
   });
 
-  // 处理客户端断开连接
+  // Handle client disconnection
   ws.on('close', () => {
     if (userId) {
       clients.delete(userId);
-      console.log(`用户 ${userId} 已断开连接`);
+      console.log(`User ${userId} disconnected`);
       
-      // 通知所有客户端有用户下线
+      // Notify all clients that a user is offline
       broadcastUserStatus(userId, false);
     }
   });
 });
 
-// 广播用户状态变更
+// Broadcast user status changes
 function broadcastUserStatus(userId, isOnline) {
   clients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN) {
@@ -71,5 +71,5 @@ function broadcastUserStatus(userId, isOnline) {
 
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
-  console.log(`WebSocket 服务器已在端口 ${PORT} 上启动`);
+  console.log(`WebSocket server started on port ${PORT}`);
 }); 

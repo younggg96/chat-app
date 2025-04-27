@@ -1,20 +1,19 @@
 import React from 'react';
 import { useThemeStore, colorSchemes, ColorScheme } from '../store/themeStore';
+import { IconButton } from './ui';
 
 interface ColorPickerProps {
   onClose?: () => void;
 }
 
 export default function ColorPicker({ onClose }: ColorPickerProps) {
-  const { mode, colorScheme, setColorScheme } = useThemeStore();
-  const isDarkMode = mode === 'dark';
+  const { colorScheme, setColorScheme } = useThemeStore();
 
   return (
-    <div className={`p-5 rounded-lg shadow-lg z-10 ${
-      isDarkMode ? 'bg-gray-900 border border-gray-800' : 'bg-white border border-gray-100'
-    }`} style={{ width: '240px' }}>
+    <div className="p-5 rounded-lg shadow-lg z-10 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800" 
+         style={{ width: '240px' }}>
       <div className="mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
-        <h3 className={`text-sm font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-200">
           Appearance
         </h3>
       </div>

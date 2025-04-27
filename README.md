@@ -1,62 +1,120 @@
-# 聊天应用演示
+# Chat Application Demo
 
-这是一个使用 React、TypeScript 和 WebSocket 构建的实时聊天应用演示。
+A real-time chat application built with React, TypeScript, and WebSocket technology.
 
-## 功能
+## Features
 
-- 实时消息传递
-- 用户在线状态显示
-- 响应式设计
-- 暗/亮主题切换
+- **Real-time messaging**: Instant message delivery using WebSocket
+- **Online status indicators**: See when users are online or offline
+- **Responsive design**: Works on desktop and mobile devices
+- **Dark/Light theme**: Toggle between visual themes for comfort
+- **Message history**: View previous conversations
+- **User authentication**: Simple login system
 
-## 安装
+## Tech Stack
 
-1. 克隆仓库：
+### Frontend
+- React 18
+- TypeScript
+- Tailwind CSS for styling
+- Zustand for state management
+- Vite for development and building
+
+### Backend
+- Node.js
+- Express.js
+- WebSocket (ws library)
+
+## Prerequisites
+
+- Node.js (version 16 or higher)
+- npm (version 7 or higher)
+
+## Installation
+
+1. Clone the repository:
 
 ```bash
 git clone <repository-url>
 cd chat-app-demo
 ```
 
-2. 安装依赖：
+2. Install dependencies:
 
 ```bash
 npm install
 ```
 
-## 运行应用
+## Running the Application
 
-### 开发模式
+### Combined Development Mode
 
-同时启动前端和WebSocket服务器：
+Start both the frontend and WebSocket server simultaneously:
 
 ```bash
 npm run dev
 ```
 
-这将启动：
-- WebSocket服务器在端口 3001
-- 前端开发服务器在端口 5173
+This will launch:
+- WebSocket server on port 3001
+- Frontend development server on port 5173
 
-### 分别启动
+### Separate Startup
 
-如果想分别启动服务器和前端：
+If you prefer to start the server and frontend separately:
 
 ```bash
-# 启动WebSocket服务器
+# Start the WebSocket server
 npm run server
 
-# 在另一个终端启动前端
+# In another terminal, start the frontend
 npm run start
 ```
 
-## 使用说明
+## How to Use
 
-1. 打开浏览器访问 `http://localhost:5173`
-2. 使用任意用户名登录
-3. 选择联系人开始聊天
+1. Open your browser and navigate to `http://localhost:5173`
+2. Enter any username to log in (no password required for this demo)
+3. Select a contact from the list on the left sidebar
+4. Start sending messages in the chat area
+5. Toggle between light and dark themes using the theme switch in the top navigation bar
 
-## 技术栈
+## Project Structure
 
-- 前端：React、TypeScript、Tailwind CSS、Zustand
-- 后端：Node.js、Express、ws（WebSocket库） 
+```
+/
+├── public/              # Static assets
+├── src/                 # Frontend source code
+│   ├── components/      # React components
+│   ├── hooks/           # Custom React hooks
+│   ├── store/           # Zustand state stores
+│   ├── types/           # TypeScript type definitions
+│   └── App.tsx          # Main application component
+├── server.js            # WebSocket server implementation
+└── package.json         # Project dependencies and scripts
+```
+
+## Troubleshooting
+
+- **Port already in use**: If port 3001 is already in use, you can either:
+  - Kill the process using the port: `lsof -i :3001` to find the PID, then `kill <PID>`
+  - Or modify the port in `server.js` (change the PORT constant)
+
+- **Connection issues**: Ensure both the server and frontend are running
+
+## Future Improvements
+
+- Add persistent message storage with a database
+- Implement user authentication with passwords
+- Add file sharing capabilities
+- Implement typing indicators
+- Add group chat functionality
+- Enable message read receipts
+
+## License
+
+MIT
+
+## Contact
+
+For questions or feedback, please reach out to [your-contact-information] 
