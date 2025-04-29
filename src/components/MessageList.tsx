@@ -1,7 +1,7 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useChatStore } from '../store/chatStore';
-import { format } from 'date-fns';
-import { MessageBubble } from './ui';
+import { format, parseISO } from 'date-fns';
+import { MessageBubble, MessageSkeleton } from './ui';
 
 interface Message {
   id: number;
@@ -12,19 +12,43 @@ interface Message {
 
 interface MessageListProps {
   messages: Message[];
+  isLoading?: boolean;
 }
 
-export default function MessageList({ messages }: MessageListProps) {
+export default function MessageList({ messages, isLoading = false }: MessageListProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
   const currentUser = useChatStore((state) => state.currentUser);
+  const [prevChatId, setPrevChatId] = useState<string | null>(null);
+  const activeChat = useChatStore((state) => state.activeChat);
+  const activeChatId = activeChat?.id || null;
+  
+  // 检测是否切换了聊天
+  const [isSwitchingChat, setIsSwitchingChat] = useState(false);
+
+  useEffect(() => {
+    if (activeChatId !== prevChatId) {
+      setPrevChatId(activeChatId);
+    }
+  }, [activeChatId, prevChatId]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [messages, isSwitchingChat]);
 
-  const formatTime = (date: Date) => {
+  const formatTime = (date: Date | string) => {
+    if (typeof date === 'string') {
+      return format(parseISO(date), 'HH:mm');
+    }
     return format(date, 'HH:mm');
   };
+  
+  if (isLoading || isSwitchingChat) {
+    return (
+      <div className="flex-1 p-5 overflow-y-auto">
+        <MessageSkeleton count={4} />
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 p-5 overflow-y-auto">

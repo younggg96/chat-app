@@ -40,23 +40,25 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
             ? `rounded-2xl rounded-br-sm ${
                 isDarkMode
                   ? `bg-gradient-to-r ${colors.primary}`
-                  : `bg-gradient-to-r ${colors.primary}`
-              } text-white`
+                  : `bg-gradient-to-br ${colors.primary}`
+              } text-white shadow-md`
             : `rounded-2xl rounded-bl-sm ${
                 isDarkMode
                   ? 'bg-gray-800/70 backdrop-blur-sm'
-                  : 'bg-gray-100/80'
-              } ${isDarkMode ? 'text-gray-100' : 'text-gray-800'}`
-        } shadow-sm transition-all duration-200 hover:shadow-md`}
+                  : 'bg-white border border-slate-200/80'
+              } ${isDarkMode ? 'text-gray-100' : 'text-gray-800'} shadow-sm`
+        } transition-all duration-300 hover:shadow-md animate-fadeIn ${
+          isCurrentUser ? 'animate-slideLeft' : 'animate-slideRight'
+        }`}
       >
         <p className="font-light">{content}</p>
         <span
           className={`block text-xs mt-1.5 ${
             isCurrentUser
-              ? 'text-right text-white/80'
+              ? 'text-right text-white/90'
               : isDarkMode
               ? 'text-gray-400'
-              : 'text-gray-500'
+              : 'text-slate-500'
           }`}
         >
           {timestamp}

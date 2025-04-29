@@ -45,12 +45,12 @@ export default function Login() {
   }, []);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
-      <div className="max-w-md w-full mx-auto p-8 rounded-xl shadow-md bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300">
+    <div className="min-h-screen flex items-center justify-center bg-slate-100 dark:bg-gray-950 transition-colors duration-300">
+      <div className="max-w-md w-full mx-auto p-8 rounded-xl shadow-lg bg-white dark:bg-gray-900 text-gray-800 dark:text-white transition-colors duration-300 border border-slate-200/80 dark:border-gray-800">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-medium">Messenger</h1>
-          <p className="mt-2 text-gray-500 dark:text-gray-400">
-            Sign in to continue to your conversations
+          <p className="mt-2 text-slate-500 dark:text-gray-400">
+            Sign in to continue your conversations
           </p>
         </div>
         
@@ -77,7 +77,7 @@ export default function Login() {
                   <ColorPicker onClose={() => setShowColorPicker(false)} />
                 </div>}
               </div>
-              <span className="ml-2 text-sm text-gray-600 dark:text-gray-300">Theme</span>
+              <span className="ml-2 text-sm text-slate-600 dark:text-gray-300">Theme</span>
             </div>
             
             <ThemeToggle />

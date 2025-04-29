@@ -38,9 +38,10 @@ export const Avatar: React.FC<AvatarProps> = ({
             ? `bg-gradient-to-r ${colors.primary}`
             : isDarkMode 
               ? 'bg-gray-700/80' 
-              : 'bg-gray-100/80'
+              : 'bg-gray-200/80'
         }
         ${className}
+        transition-all duration-300 hover:scale-110 animate-scale
       `}
     >
       {src ? (

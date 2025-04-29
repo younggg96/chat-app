@@ -31,15 +31,15 @@ export const IconButton: React.FC<IconButtonProps> = ({
   const getVariantClasses = () => {
     switch (variant) {
       case 'primary':
-        return `bg-gradient-to-r ${colors.primary} text-white hover:opacity-90`;
+        return `bg-gradient-to-r ${colors.primary} text-white shadow-md hover:shadow-lg hover:opacity-90`;
       case 'secondary':
-        return `${isDarkMode ? 'bg-gray-800 text-gray-300 hover:bg-gray-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`;
+        return `${isDarkMode ? 'bg-gray-800 text-gray-300 hover:bg-gray-700' : 'bg-white text-gray-600 hover:bg-gray-50 border border-slate-200 shadow-sm hover:shadow'}`;
       case 'outline':
-        return `border ${colors.border} ${colors.text} bg-transparent hover:bg-opacity-10 ${isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'}`;
+        return `border ${colors.border} ${colors.text} bg-transparent shadow-sm hover:shadow hover:bg-opacity-10 ${isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-50'}`;
       case 'transparent':
         return `bg-transparent ${isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'} hover:bg-opacity-10`;
       default:
-        return `${isDarkMode ? 'bg-gray-800 text-gray-300 hover:bg-gray-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`;
+        return `${isDarkMode ? 'bg-gray-800 text-gray-300 hover:bg-gray-700' : 'bg-white text-gray-600 hover:bg-gray-50 border border-slate-200 shadow-sm hover:shadow'}`;
     }
   };
 
@@ -47,10 +47,10 @@ export const IconButton: React.FC<IconButtonProps> = ({
     <button
       type={type}
       className={`
-        rounded-full transition-colors duration-200 focus:outline-none
+        rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500
         ${sizeClasses[size]}
         ${getVariantClasses()}
-        ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
+        ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110 active:scale-95 transition-transform'}
         ${className}
       `}
       disabled={disabled}

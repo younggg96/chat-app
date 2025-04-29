@@ -25,22 +25,22 @@ export const Button: React.FC<ButtonProps> = ({
 
   const sizeClasses = {
     sm: 'py-2 px-3 text-sm',
-    md: 'py-3 px-4',
-    lg: 'py-3.5 px-5 text-lg',
+    md: 'py-2.5 px-4',
+    lg: 'py-3 px-5 text-lg',
   };
 
   const getVariantClasses = () => {
     switch (variant) {
       case 'primary':
-        return `bg-gradient-to-r ${colors.primary} text-white hover:opacity-90`;
+        return `bg-gradient-to-r ${colors.primary} text-white shadow-md hover:shadow-lg hover:opacity-90`;
       case 'secondary':
-        return `${isDarkMode ? 'bg-gray-800 text-white hover:bg-gray-700' : 'bg-gray-100 text-gray-900 hover:bg-gray-200'}`;
+        return `${isDarkMode ? 'bg-gray-800 text-white hover:bg-gray-700' : 'bg-white text-gray-800 hover:bg-gray-50 border border-slate-200 shadow-sm hover:shadow'} `;
       case 'outline':
-        return `border ${colors.border} ${colors.text} bg-transparent hover:bg-opacity-10 ${isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'}`;
+        return `border ${colors.border} ${colors.text} bg-transparent shadow-sm hover:shadow hover:bg-opacity-10 ${isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-50'}`;
       case 'link':
         return `bg-transparent ${colors.text} hover:underline p-0`;
       default:
-        return `bg-gradient-to-r ${colors.primary} text-white hover:opacity-90`;
+        return `bg-gradient-to-r ${colors.primary} text-white hover:opacity-90 shadow-md hover:shadow-lg`;
     }
   };
 
@@ -48,7 +48,7 @@ export const Button: React.FC<ButtonProps> = ({
     font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2
     ${variant !== 'link' ? sizeClasses[size] : ''}
     ${fullWidth ? 'w-full' : ''}
-    ${disabled || isLoading ? 'opacity-60 cursor-not-allowed' : ''}
+    ${disabled || isLoading ? 'opacity-60 cursor-not-allowed' : 'hover:scale-105 active:scale-95'}
     ${getVariantClasses()}
   `;
 
