@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { v4 as uuidv4 } from 'uuid';
 
 interface User {
   id: string;
@@ -23,24 +24,104 @@ interface AuthState {
   clearError: () => void;
 }
 
-// Simulate API call delay
+// 模拟延迟
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-// Mock user data storage
-const users: Record<string, { id: string; username: string; email: string; password: string; avatar?: string }> = {
+// 模拟用户数据存储
+const mockUsers: Record<string, { id: string; username: string; email: string; password: string; avatar?: string }> = {
   "user1@example.com": {
-    id: "1",
-    username: "alice",
+    id: "user1",
+    username: "Alice",
     email: "user1@example.com",
-    password: "password123"
+    password: "password123",
+    avatar: "A"
   },
   "user2@example.com": {
-    id: "2",
-    username: "bob",
+    id: "user2",
+    username: "Bob",
     email: "user2@example.com",
-    password: "password123"
+    password: "password123",
+    avatar: "B"
   }
 };
+
+// 开发环境下启用模拟API
+const USE_MOCK_API = true;
+
+// 模拟API请求
+async function mockFetch(url: string, options: RequestInit): Promise<Response> {
+  // 模拟网络延迟
+  await delay(500);
+  
+  // 解析请求体
+  const body = options.body ? JSON.parse(options.body as string) : {};
+  
+  // 根据URL和方法模拟不同的API响应
+  if (url === '/api/register' && options.method === 'POST') {
+    const { username, email, password } = body;
+    
+    // 检查邮箱是否已存在
+    if (mockUsers[email]) {
+      return createMockResponse(400, { error: 'Email already registered' });
+    }
+    
+    // 创建新用户
+    const id = uuidv4();
+    mockUsers[email] = { id, username, email, password, avatar: username.charAt(0).toUpperCase() };
+    
+    // 返回成功响应
+    return createMockResponse(201, {
+      id,
+      username,
+      email,
+      avatar: username.charAt(0).toUpperCase(),
+      token: `mock_token_${Math.random().toString(36).substr(2, 9)}`
+    });
+  }
+  
+  if (url === '/api/login' && options.method === 'POST') {
+    const { email, password } = body;
+    
+    // 检查用户是否存在
+    const user = mockUsers[email];
+    if (!user) {
+      return createMockResponse(404, { error: 'User not found' });
+    }
+    
+    // 校验密码
+    if (user.password !== password) {
+      return createMockResponse(401, { error: 'Invalid password' });
+    }
+    
+    // 返回成功响应
+    return createMockResponse(200, {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      avatar: user.avatar,
+      token: `mock_token_${Math.random().toString(36).substr(2, 9)}`
+    });
+  }
+  
+  // 默认返回404错误
+  return createMockResponse(404, { error: 'API endpoint not found' });
+}
+
+// 创建模拟响应
+function createMockResponse(status: number, data: any): Response {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
+
+// 封装fetch函数，在开发环境下使用模拟API
+async function fetchWithMock(url: string, options: RequestInit): Promise<Response> {
+  if (USE_MOCK_API) {
+    return mockFetch(url, options);
+  }
+  return fetch(url, options);
+}
 
 export const useAuthStore = create<AuthState>()(
   persist(
@@ -55,30 +136,39 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true, error: null });
         
         try {
-          await delay(1000); // Simulate network delay
+          const response = await fetchWithMock('/api/register', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, email, password })
+          });
           
-          // Check if email is already registered
-          if (users[email]) {
-            throw new Error("Email already registered");
+          // 处理非2xx范围的响应
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Registration failed');
           }
           
-          // Create new user
-          const id = `${Object.keys(users).length + 1}`;
-          const newUser = { id, username, email, password };
-          users[email] = newUser;
+          // 解析响应数据
+          const userData = await response.json();
           
-          // Generate fake token
-          const token = `token_${Math.random().toString(36).substr(2, 9)}`;
-          
-          // Login user
+          // 登录用户
           set({
-            user: { id, username, email },
-            token,
+            user: { 
+              id: userData.id, 
+              username: userData.username, 
+              email: userData.email, 
+              avatar: userData.avatar 
+            },
+            token: userData.token,
             isAuthenticated: true,
             isLoading: false
           });
           
+          console.log('User registered successfully:', userData);
         } catch (error: any) {
+          console.error('Registration error:', error);
           set({ error: error.message, isLoading: false });
         }
       },
@@ -87,31 +177,39 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true, error: null });
         
         try {
-          await delay(1000); // Simulate network delay
+          const response = await fetchWithMock('/api/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password })
+          });
           
-          // Check if user exists
-          const user = users[email];
-          if (!user) {
-            throw new Error("User does not exist");
+          // 处理非2xx范围的响应
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Login failed');
           }
           
-          // Validate password
-          if (user.password !== password) {
-            throw new Error("Incorrect password");
-          }
+          // 解析响应数据
+          const userData = await response.json();
           
-          // Generate fake token
-          const token = `token_${Math.random().toString(36).substr(2, 9)}`;
-          
-          // Login user
+          // 登录用户
           set({
-            user: { id: user.id, username: user.username, email: user.email, avatar: user.avatar },
-            token,
+            user: { 
+              id: userData.id, 
+              username: userData.username, 
+              email: userData.email, 
+              avatar: userData.avatar 
+            },
+            token: userData.token,
             isAuthenticated: true,
             isLoading: false
           });
           
+          console.log('User logged in successfully:', userData);
         } catch (error: any) {
+          console.error('Login error:', error);
           set({ error: error.message, isLoading: false });
         }
       },
@@ -128,36 +226,23 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true, error: null });
         
         try {
-          await delay(1000); // Simulate network delay
+          // 模拟延迟
+          await delay(1000);
           
           const currentUser = get().user;
           if (!currentUser) {
             throw new Error("Not logged in");
           }
           
-          // Update user info
+          // 更新用户信息
           const updatedUser = { ...currentUser, ...userData };
           
-          // If email was updated, update users object
-          if (userData.email && currentUser.email !== userData.email) {
-            if (users[userData.email]) {
-              throw new Error("Email already in use");
-            }
-            
-            const userRecord = users[currentUser.email];
-            if (userRecord) {
-              delete users[currentUser.email];
-              users[userData.email] = {
-                ...userRecord,
-                ...userData,
-                email: userData.email
-              };
-            }
-          } else if (currentUser.email) {
-            // Update other fields
-            users[currentUser.email] = {
-              ...users[currentUser.email],
-              ...userData
+          // 如果是模拟API，同时更新模拟用户
+          if (USE_MOCK_API && currentUser.email && mockUsers[currentUser.email]) {
+            mockUsers[currentUser.email] = {
+              ...mockUsers[currentUser.email],
+              ...userData,
+              id: currentUser.id
             };
           }
           

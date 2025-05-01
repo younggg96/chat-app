@@ -7,10 +7,8 @@ import { Form, Input, Button, FormError } from '../ui';
 
 export default function Register() {
   const navigate = useNavigate();
-  const { register, isLoading, error, isAuthenticated, clearError } = useAuthStore();
-  const chatLogin = useChatStore((state) => state.login);
-  const selectChat = useChatStore((state) => state.selectChat);
-  const users = useChatStore((state) => state.users);
+  const { register, isLoading, error, isAuthenticated, clearError, user } = useAuthStore();
+  const { login: chatLogin, selectChat } = useChatStore();
   
   const [formData, setFormData] = useState({
     username: '',
@@ -76,21 +74,18 @@ export default function Register() {
   
   // Redirect to chat page when authentication is successful
   useEffect(() => {
-    if (isAuthenticated) {
-      const authUser = useAuthStore.getState().user;
-      if (authUser) {
-        // Login to chat system
-        chatLogin(authUser.username);
-        
-        // Select first user as default chat
-        if (users.length > 0) {
-          selectChat(users[0].id);
-        }
-        
-        navigate('/chat');
-      }
+    if (isAuthenticated && user) {
+      // Login to chat system using user ID and username
+      chatLogin(user.username, user.id)
+        .then(() => {
+          // 登录成功后重定向到聊天页面
+          navigate('/chat');
+        })
+        .catch(err => {
+          console.error('Failed to connect to chat service:', err);
+        });
     }
-  }, [isAuthenticated, navigate, chatLogin, selectChat, users]);
+  }, [isAuthenticated, user, navigate, chatLogin]);
   
   return (
     <Form onSubmit={handleSubmit} className="space-y-4">
@@ -103,7 +98,6 @@ export default function Register() {
         label="Username"
         value={formData.username}
         onChange={handleChange}
-        icon={<FiUser />}
         placeholder="Enter your username"
         required
       />
@@ -115,7 +109,6 @@ export default function Register() {
         label="Email"
         value={formData.email}
         onChange={handleChange}
-        icon={<FiMail />}
         placeholder="Enter your email"
         required
       />
@@ -127,9 +120,9 @@ export default function Register() {
         label="Password"
         value={formData.password}
         onChange={handleChange}
-        icon={<FiLock />}
         placeholder="Enter your password"
-        error={formErrors.password}
+        error={formErrors.password !== ''}
+        helperText={formErrors.password}
         required
       />
       
@@ -140,9 +133,9 @@ export default function Register() {
         label="Confirm Password"
         value={formData.confirmPassword}
         onChange={handleChange}
-        icon={<FiLock />}
         placeholder="Re-enter your password"
-        error={formErrors.confirmPassword}
+        error={formErrors.confirmPassword !== ''}
+        helperText={formErrors.confirmPassword}
         required
       />
       

@@ -8,4 +8,7 @@ export { default as Avatar } from './Avatar';
 export { default as UserCard } from './UserCard';
 export { default as MessageBubble } from './MessageBubble';
 export { default as Skeleton } from './Skeleton';
-export { default as MessageSkeleton } from './MessageSkeleton'; 
+export { default as MessageSkeleton } from './MessageSkeleton';
+export { default as ModelSelector } from './ModelSelector';
+export { default as Tab } from './Tab';
+export { Spinner } from './Spinner';

@@ -4,6 +4,7 @@ import { useThemeStore } from "./store/themeStore";
 import { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import AuthPage from "./components/auth/AuthPage";
+import { Toaster } from "./components/ui/shadcn";
 
 function App() {
   const { isAuthenticated } = useAuthStore();
@@ -57,6 +58,7 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>
+      <Toaster />
     </div>
   );
 }

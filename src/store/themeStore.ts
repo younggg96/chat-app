@@ -1,86 +1,90 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-// 定义主题类型
-export type ThemeMode = 'light' | 'dark';
-export type ColorScheme = 'indigo' | 'teal' | 'amber' | 'rose' | 'blue';
+// Define available themes
+export type ThemeMode = 'dark' | 'light';
+export type ColorScheme = 'blue' | 'purple' | 'green' | 'pink' | 'amber';
 
-// 主题状态接口
+// Color scheme definitions
+export const colorSchemes = {
+  blue: {
+    primary: 'from-blue-500 to-blue-600',
+    secondary: 'from-blue-400 to-blue-500',
+    lighter: 'from-blue-400 to-blue-500',
+    darker: 'from-blue-600 to-blue-700',
+    hover: 'bg-blue-600',
+    lighterHover: 'bg-blue-500',
+    text: 'text-blue-500',
+    border: 'border-blue-500',
+    darkOpacity: 'bg-blue-500/10',
+    darkOpacityHover: 'hover:bg-blue-500/20',
+  },
+  purple: {
+    primary: 'from-purple-500 to-purple-600',
+    secondary: 'from-purple-400 to-purple-500',
+    lighter: 'from-purple-400 to-purple-500',
+    darker: 'from-purple-600 to-purple-700',
+    hover: 'bg-purple-600',
+    lighterHover: 'bg-purple-500',
+    text: 'text-purple-500',
+    border: 'border-purple-500',
+    darkOpacity: 'bg-purple-500/10',
+    darkOpacityHover: 'hover:bg-purple-500/20',
+  },
+  green: {
+    primary: 'from-emerald-500 to-emerald-600',
+    secondary: 'from-emerald-400 to-emerald-500',
+    lighter: 'from-emerald-400 to-emerald-500',
+    darker: 'from-emerald-600 to-emerald-700',
+    hover: 'bg-emerald-600',
+    lighterHover: 'bg-emerald-500',
+    text: 'text-emerald-500',
+    border: 'border-emerald-500',
+    darkOpacity: 'bg-emerald-500/10',
+    darkOpacityHover: 'hover:bg-emerald-500/20',
+  },
+  pink: {
+    primary: 'from-pink-500 to-pink-600',
+    secondary: 'from-pink-400 to-pink-500',
+    lighter: 'from-pink-400 to-pink-500',
+    darker: 'from-pink-600 to-pink-700',
+    hover: 'bg-pink-600',
+    lighterHover: 'bg-pink-500',
+    text: 'text-pink-500',
+    border: 'border-pink-500',
+    darkOpacity: 'bg-pink-500/10',
+    darkOpacityHover: 'hover:bg-pink-500/20',
+  },
+  amber: {
+    primary: 'from-amber-500 to-amber-600',
+    secondary: 'from-amber-400 to-amber-500',
+    lighter: 'from-amber-400 to-amber-500',
+    darker: 'from-amber-600 to-amber-700',
+    hover: 'bg-amber-600',
+    lighterHover: 'bg-amber-500',
+    text: 'text-amber-500',
+    border: 'border-amber-500',
+    darkOpacity: 'bg-amber-500/10',
+    darkOpacityHover: 'hover:bg-amber-500/20',
+  },
+};
+
 interface ThemeState {
   mode: ThemeMode;
   colorScheme: ColorScheme;
   toggleMode: () => void;
-  setColorScheme: (color: ColorScheme) => void;
+  setColorScheme: (scheme: ColorScheme) => void;
 }
-
-// 导出颜色方案配置
-export const colorSchemes = {
-  indigo: {
-    primary: 'from-indigo-500 to-purple-500',
-    lighter: 'bg-indigo-500',
-    darker: 'bg-indigo-600',
-    hover: 'hover:bg-indigo-600',
-    lighterHover: 'hover:bg-indigo-400',
-    text: 'text-indigo-500',
-    border: 'border-indigo-500',
-    darkOpacity: 'bg-indigo-500/20',
-    darkOpacityHover: 'hover:bg-indigo-500/30'
-  },
-  teal: {
-    primary: 'from-teal-500 to-emerald-500',
-    lighter: 'bg-teal-500',
-    darker: 'bg-teal-600',
-    hover: 'hover:bg-teal-600',
-    lighterHover: 'hover:bg-teal-400',
-    text: 'text-teal-500',
-    border: 'border-teal-500',
-    darkOpacity: 'bg-teal-500/20',
-    darkOpacityHover: 'hover:bg-teal-500/30'
-  },
-  amber: {
-    primary: 'from-amber-500 to-orange-500',
-    lighter: 'bg-amber-500',
-    darker: 'bg-amber-600',
-    hover: 'hover:bg-amber-600',
-    lighterHover: 'hover:bg-amber-400',
-    text: 'text-amber-500',
-    border: 'border-amber-500',
-    darkOpacity: 'bg-amber-500/20',
-    darkOpacityHover: 'hover:bg-amber-500/30'
-  },
-  rose: {
-    primary: 'from-rose-500 to-pink-500',
-    lighter: 'bg-rose-500',
-    darker: 'bg-rose-600',
-    hover: 'hover:bg-rose-600',
-    lighterHover: 'hover:bg-rose-400',
-    text: 'text-rose-500',
-    border: 'border-rose-500',
-    darkOpacity: 'bg-rose-500/20',
-    darkOpacityHover: 'hover:bg-rose-500/30'
-  },
-  blue: {
-    primary: 'from-blue-500 to-sky-500',
-    lighter: 'bg-blue-500',
-    darker: 'bg-blue-600',
-    hover: 'hover:bg-blue-600',
-    lighterHover: 'hover:bg-blue-400',
-    text: 'text-blue-500',
-    border: 'border-blue-500',
-    darkOpacity: 'bg-blue-500/20',
-    darkOpacityHover: 'hover:bg-blue-500/30'
-  }
-};
 
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set) => ({
       mode: 'light',
-      colorScheme: 'indigo',
+      colorScheme: 'blue',
       toggleMode: () => set((state) => ({ 
         mode: state.mode === 'light' ? 'dark' : 'light' 
       })),
-      setColorScheme: (color) => set(() => ({ colorScheme: color })),
+      setColorScheme: (scheme) => set({ colorScheme: scheme }),
     }),
     {
       name: "theme-storage",

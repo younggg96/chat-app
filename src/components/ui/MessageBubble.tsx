@@ -8,6 +8,7 @@ interface MessageBubbleProps {
   sender: string;
   timestamp: string;
   isCurrentUser: boolean;
+  isLoading?: boolean;
   className?: string;
 }
 
@@ -16,6 +17,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   sender,
   timestamp,
   isCurrentUser,
+  isLoading = false,
   className = '',
 }) => {
   const { mode, colorScheme } = useThemeStore();
@@ -49,9 +51,18 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
               } ${isDarkMode ? 'text-gray-100' : 'text-gray-800'} shadow-sm`
         } transition-all duration-300 hover:shadow-md animate-fadeIn ${
           isCurrentUser ? 'animate-slideLeft' : 'animate-slideRight'
-        }`}
+        } ${isLoading ? 'animate-pulse' : ''}`}
       >
-        <p className="font-light">{content}</p>
+        <p className="font-light">
+          {content}
+          {isLoading && (
+            <span className="inline-block ml-1">
+              <span className="animate-pulse">.</span>
+              <span className="animate-pulse animation-delay-200">.</span>
+              <span className="animate-pulse animation-delay-400">.</span>
+            </span>
+          )}
+        </p>
         <span
           className={`block text-xs mt-1.5 ${
             isCurrentUser
@@ -61,7 +72,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
               : 'text-slate-500'
           }`}
         >
-          {timestamp}
+          {isLoading ? 'AI正在回复中' : timestamp}
         </span>
       </div>
       

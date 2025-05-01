@@ -1,5 +1,6 @@
 import React from 'react';
-import { useThemeStore, colorSchemes } from '../../store/themeStore';
+import { Avatar as ShadcnAvatar, AvatarImage, AvatarFallback } from './shadcn/avatar';
+import { cn } from '@/lib/utils';
 
 interface AvatarProps {
   name: string;
@@ -16,52 +17,33 @@ export const Avatar: React.FC<AvatarProps> = ({
   src,
   className = '',
 }) => {
-  const { mode, colorScheme } = useThemeStore();
-  const isDarkMode = mode === 'dark';
-  const colors = colorSchemes[colorScheme];
-
   const sizeClasses = {
-    sm: 'h-8 w-8 text-sm',
-    md: 'h-10 w-10 text-base',
-    lg: 'h-11 w-11 text-lg',
+    sm: 'h-8 w-8 text-xs',
+    md: 'h-10 w-10 text-sm',
+    lg: 'h-12 w-12 text-base',
   };
 
   const letter = name.charAt(0).toUpperCase();
 
   return (
-    <div
-      className={`
-        rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden
-        ${sizeClasses[size]}
-        ${
-          isActive
-            ? `bg-gradient-to-r ${colors.primary}`
-            : isDarkMode 
-              ? 'bg-gray-700/80' 
-              : 'bg-gray-200/80'
-        }
-        ${className}
-        transition-all duration-300 hover:scale-110 animate-scale
-      `}
-    >
-      {src ? (
-        <img 
-          src={src}
-          alt={`${name}'s avatar`}
-          className="w-full h-full object-cover"
-        />
-      ) : (
-        <span className={`font-medium ${
-          isActive
-            ? 'text-white'
-            : isDarkMode 
-              ? 'text-gray-300' 
-              : 'text-gray-600'
-        }`}>
-          {letter}
-        </span>
+    <ShadcnAvatar 
+      className={cn(
+        sizeClasses[size],
+        isActive && "ring-2 ring-primary ring-offset-2 ring-offset-background",
+        "transition-all duration-300 hover:scale-110",
+        className
       )}
-    </div>
+    >
+      {src && <AvatarImage src={src} alt={`${name}'s avatar`} />}
+      <AvatarFallback 
+        className={cn(
+          isActive && "bg-primary text-primary-foreground",
+          "font-medium"
+        )}
+      >
+        {letter}
+      </AvatarFallback>
+    </ShadcnAvatar>
   );
 };
 
